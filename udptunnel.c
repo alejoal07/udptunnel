@@ -32,7 +32,7 @@ typedef unsigned char u_int8;
 
 struct out_packet {
   u_int16 length;
-  char buf[UDPBUFFERSIZE];
+  unsigned char buf[UDPBUFFERSIZE];
 };
 
 struct relay {
