@@ -476,6 +476,41 @@ static void setup_tcp_client(struct relay *relay)
 static int udp_to_tcp(struct relay *relay)
 {
   struct out_packet p;
+  struct out_packet wirMessage;
+  int buflen;
+  struct sockaddr_in remote_udpaddr;
+  int addrlen = sizeof(remote_udpaddr);
+
+  if ((buflen = recvfrom(relay->udp_recv_sock, p.buf, UDPBUFFERSIZE, 0,
+                         (struct sockaddr *) &remote_udpaddr,
+                         &addrlen)) <= 0) {
+    if (buflen < 0) {
+      perror("udp_to_tcp: recv");
+    }
+    return 1;
+  }
+
+   if (debug > 1) {
+    fprintf(stderr, "Received %d byte UDP packet from %s/%hu\n", buflen,
+            inet_ntoa(remote_udpaddr.sin_addr),
+            ntohs(remote_udpaddr.sin_port));
+    for(int 1 = 0; i<buflen ; i++){
+    fprintf(stderr, "%X ",p.buf[i]);  
+    }
+  }
+  p.length = htons(buflen);
+  if (send(relay->tcp_sock, (void *) &p, buflen+sizeof(p.length), 0) < 0) {
+    perror("udp_to_tcp: send");
+    return 1;
+  }
+
+  return 0;
+} /* udp_to_tcp */
+
+/* Original Function
+static int udp_to_tcp(struct relay *relay)
+{
+  struct out_packet p;
   int buflen;
   struct sockaddr_in remote_udpaddr;
   int addrlen = sizeof(remote_udpaddr);
