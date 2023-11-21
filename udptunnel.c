@@ -495,9 +495,9 @@ static int udp_to_tcp(struct relay *relay)
             inet_ntoa(remote_udpaddr.sin_addr),
             ntohs(remote_udpaddr.sin_port));
     for(int i = 0; i<buflen ; i++){
-      fprintf(stderr, "%02X ",p.buf[i]);
-      fprintf(stderr, "\n");   
+      fprintf(stderr, "%02X ",p.buf[i]); 
     }
+    fprintf(stderr, "\n");
   }
   p.length = htons(buflen);
   if (send(relay->tcp_sock, (void *) &p, buflen+sizeof(p.length), 0) < 0) {
