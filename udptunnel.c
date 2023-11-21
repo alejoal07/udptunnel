@@ -494,7 +494,7 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Received %d byte UDP packet from %s/%hu\n", buflen,
             inet_ntoa(remote_udpaddr.sin_addr),
             ntohs(remote_udpaddr.sin_port));
-    for(int 1 = 0; i<buflen ; i++){
+    for(int i = 0; i<buflen ; i++){
     fprintf(stderr, "%X ",p.buf[i]);  
     }
   }
