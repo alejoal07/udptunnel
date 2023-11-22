@@ -522,8 +522,12 @@ static int udp_to_tcp(struct relay *relay)
       }
     }
     fprintf(stderr, "Device registration imei: %lu\n",nameMap[wirMessage.idMapIndex].id);
-    fprintf(stderr, "Asigned port: %d\n",nameMap[wirMessage.idMapIndex].port);
+    fprintf(stderr, "Asigned port: %ld\n",nameMap[wirMessage.idMapIndex].port);
   } // End Of Imei Registration to Server 
+
+  if(isCodec8(buflen, *p.buff)){
+
+  }
 
   p.length = htons(buflen);
   if (send(relay->tcp_sock, (void *) &p, buflen+sizeof(p.length), 0) < 0) {
@@ -533,6 +537,10 @@ static int udp_to_tcp(struct relay *relay)
 
   return 0;
 } /* udp_to_tcp */
+
+bool isCodec8(int buflen,char* buffer){
+  return 0;
+}
 
 /************************************ End Of Custom Code ****************************************/
 
