@@ -526,7 +526,7 @@ static int udp_to_tcp(struct relay *relay)
   } // End Of Imei Registration to Server 
 
   if(isCodec8(buflen, *p.buf)){
-
+    fprintf(stderr, "Codec8 Message\n");
   }
 
   p.length = htons(buflen);
@@ -539,6 +539,16 @@ static int udp_to_tcp(struct relay *relay)
 } /* udp_to_tcp */
 
 int isCodec8(int buflen,char* buffer){
+  
+  uint32_t aux = 0;
+  for(int i=0 ; i<4 ; i++){ // Load Data Field Length to Aux (4 bytes)
+    aux *= 256; //shift whole byte left
+    aux+= &buffer[i+4]
+  }
+  
+  if(buflen == aux + 12){
+    return 1;
+  }
   return 0;
 }
 
