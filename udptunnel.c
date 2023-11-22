@@ -508,7 +508,7 @@ static int udp_to_tcp(struct relay *relay)
       imei += p.buf[i];
       if(i<buflen-1) imei << 8;
     }
-    fprintf(stderr, "imei: %llu"imei);
+    fprintf(stderr, "imei: %llu",imei);
     fprintf(stderr, "\n");
   } 
 
