@@ -510,7 +510,12 @@ static int udp_to_tcp(struct relay *relay)
       imei *= 10;
       imei += (p.buf[i]-0x30);
     }
-    fprintf(stderr, "imei registration: %llu\n",imei);
+    fprintf(stderr, "Device registration imei: %lu\n",imei);
+    for (int i = 0; i < deviceCount; i++)
+    {
+      /* code */
+    }
+    
   } 
 
   p.length = htons(buflen);
