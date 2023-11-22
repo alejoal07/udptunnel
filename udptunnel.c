@@ -521,8 +521,8 @@ static int udp_to_tcp(struct relay *relay)
         break;
       }
     }
-    fprintf(stderr, "Device registration imei: %lu\n",nameMap[bufferScanIndex].id);
-    fprintf(stderr, "Asigned port: %d\n",nameMap[bufferScanIndex].port);
+    fprintf(stderr, "Device registration imei: %lu\n",nameMap[wirMessage.bufferScanIndex].id);
+    fprintf(stderr, "Asigned port: %d\n",nameMap[wirMessage.bufferScanIndex].port);
   } // End Of Imei Registration to Server 
 
   p.length = htons(buflen);
