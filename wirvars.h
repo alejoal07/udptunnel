@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////// Custom Code
-bool isCodec8(int ,char*);
+int isCodec8(int ,char*);
 
 
 struct atrack_wir_message {

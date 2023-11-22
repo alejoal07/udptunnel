@@ -525,7 +525,7 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Asigned port: %ld\n",nameMap[wirMessage.idMapIndex].port);
   } // End Of Imei Registration to Server 
 
-  if(isCodec8(buflen, *p.buff)){
+  if(isCodec8(buflen, *p.buf)){
 
   }
 
@@ -538,7 +538,7 @@ static int udp_to_tcp(struct relay *relay)
   return 0;
 } /* udp_to_tcp */
 
-bool isCodec8(int buflen,char* buffer){
+int isCodec8(int buflen,char* buffer){
   return 0;
 }
 
