@@ -525,7 +525,7 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Asigned port: %ld\n",nameMap[wirMessage.idMapIndex].port);
   } // End Of Imei Registration to Server 
 
-  if(isCodec8(buflen, p.buf)){
+  if(isCodec8(buflen, p.buf)){ // Check if message is codec 8 and then parse
     fprintf(stderr, "Codec8 Message\n");
   }
 
@@ -542,14 +542,13 @@ int isCodec8(int buflen,char* buffer){
   
   uint32_t aux = 0;
 
-  for(int i=0 ; i<4 ; i++){ // Load Data Field Length to Aux (4 bytes)
+  for(int i=0 ; i<4 ; i++){ // Load Codec8 "Data Field Length" value to Aux (4 bytes)
     aux *= 256; //shift whole byte left
     aux+= buffer[i+4];
-    fprintf(stderr, "aux = %0x\n",aux);
   }
-  
-  
-  if(buflen == aux + 12){
+
+  if ((buflen == aux + 12) && (buffer[8] == 0x08) && (buffer[9] == buffer[buflen - 5]) && !buffer[0] && !buffer[1] && !buffer[2] && !buffer[3])
+  {
     return 1;
   }
   return 0;
