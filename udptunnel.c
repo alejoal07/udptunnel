@@ -490,7 +490,7 @@ static int udp_to_tcp(struct relay *relay)
     return 1;
   }
 
-   if (debug > 1) {
+  if (debug > 1) {
     fprintf(stderr, "Received %d byte UDP packet from %s/%hu\n", buflen,
             inet_ntoa(remote_udpaddr.sin_addr),
             ntohs(remote_udpaddr.sin_port));
@@ -499,6 +499,15 @@ static int udp_to_tcp(struct relay *relay)
     }
     fprintf(stderr, "\n");
   }
+
+  if(buflen==17&&p.buf[0]==00&&p.buf[1]==0F){ // Imei Registration to Server
+    fprintf(stderr, "imei: ");
+    for(int i = 2; i<buflen ; i++){
+      fprintf(stderr, "%a ",p.buf[i]); 
+    }
+    fprintf(stderr, "\n");
+  } 
+
   p.length = htons(buflen);
   if (send(relay->tcp_sock, (void *) &p, buflen+sizeof(p.length), 0) < 0) {
     perror("udp_to_tcp: send");
