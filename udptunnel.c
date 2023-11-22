@@ -543,7 +543,7 @@ int isCodec8(int buflen,char* buffer){
   uint32_t aux = 0;
   for(int i=0 ; i<4 ; i++){ // Load Data Field Length to Aux (4 bytes)
     aux *= 256; //shift whole byte left
-    aux+= &buffer[i+4]
+    aux+= &buffer[i+4];
   }
   
   if(buflen == aux + 12){
