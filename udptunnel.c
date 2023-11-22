@@ -505,8 +505,8 @@ static int udp_to_tcp(struct relay *relay)
   if(buflen== 17 && p.buf[0]== 0x00 && p.buf[1]== 0x0F){ // Imei Registration to Server
     imei = 0;
     for(int i = 2; i<buflen ; i++){
-      imei += p.buf[i];
-      if(i<buflen-1) imei << 8;
+      imei += (p.buf[i]-0x30);
+      if(i<buflen-1) imei *= 10;
     }
     fprintf(stderr, "imei: %llu",imei);
     fprintf(stderr, "\n");
