@@ -539,18 +539,20 @@ static int udp_to_tcp(struct relay *relay)
 } /* udp_to_tcp */
 
 int isCodec8(int buflen,char* buffer){
-  
   uint32_t aux = 0;
 
-  for(int i=0 ; i<4 ; i++){ // Load Codec8 "Data Field Length" value to Aux (4 bytes)
-    aux *= 256; //shift whole byte left
-    aux+= buffer[i+4];
+  if (buffer[0] || buffer[1] || buffer[2] || buffer[3]) // check preamble
+    return 0; 
+
+  for (int i = 0; i < 4; i++){ // Load Codec8 "Data Field Length" value to Aux (4 bytes)
+    aux *= 256; // shift one byte left
+    aux += buffer[i + 4];
   }
 
-  if ((buflen == aux + 12) && (buffer[8] == 0x08) && (buffer[9] == buffer[buflen - 5]) && !buffer[0] && !buffer[1] && !buffer[2] && !buffer[3])
-  {
+  // Check for correct "Data Field Length", "Codec ID", and matching "Number of Data 1 and Number of Data 2 Values"
+  if ((buflen == aux + 12) && (buffer[8] == 0x08) && (buffer[9] == buffer[buflen - 5]))
     return 1;
-  }
+
   return 0;
 }
 
