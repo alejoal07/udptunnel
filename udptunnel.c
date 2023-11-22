@@ -15,6 +15,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "wirvars.h"
 #include "host2ip.h"
 
 #define UDPBUFFERSIZE 65536
@@ -468,6 +469,7 @@ static void setup_tcp_client(struct relay *relay)
                      ntohs(relay->tcpaddr.sin_port));
 } /* connect_tcp */
 
+/***************************** Telt - Wir Custom Code ******************************************/
 
 /* udp_to_tcp()
  * A packet has arrived on the UDP port of the relay.  Forward it to the TCP
@@ -476,10 +478,10 @@ static void setup_tcp_client(struct relay *relay)
 static int udp_to_tcp(struct relay *relay)
 {
   struct out_packet p;
-  struct out_packet wirMessage;
   int buflen;
   struct sockaddr_in remote_udpaddr;
   int addrlen = sizeof(remote_udpaddr);
+  uint64_t imei; 
 
   if ((buflen = recvfrom(relay->udp_recv_sock, p.buf, UDPBUFFERSIZE, 0,
                          (struct sockaddr *) &remote_udpaddr,
@@ -501,10 +503,12 @@ static int udp_to_tcp(struct relay *relay)
   }
 
   if(buflen== 17 && p.buf[0]== 0x00 && p.buf[1]== 0x0F){ // Imei Registration to Server
-    fprintf(stderr, "imei: ");
+    imei = 0;
     for(int i = 2; i<buflen ; i++){
-      fprintf(stderr, "%c",p.buf[i]); 
+      imei += p.buf[i];
+      if(i<buflen-1) imei << 8;
     }
+    fprintf(stderr, "imei: %llu"imei);
     fprintf(stderr, "\n");
   } 
 
@@ -517,7 +521,10 @@ static int udp_to_tcp(struct relay *relay)
   return 0;
 } /* udp_to_tcp */
 
-/* Original Function
+/************************************ End Of Custom Code ****************************************/
+
+/**************** Original Function *********************/
+/*
 static int udp_to_tcp(struct relay *relay)
 {
   struct out_packet p;
@@ -546,7 +553,9 @@ static int udp_to_tcp(struct relay *relay)
   }
 
   return 0;
-} /* udp_to_tcp */
+}*/ /* udp_to_tcp */
+
+/*********************** End Of Original Function **********************/
 
 
 /* tcp_to_udp()
