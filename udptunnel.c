@@ -544,7 +544,9 @@ int isCodec8(int buflen,char* buffer){
   for(int i=0 ; i<4 ; i++){ // Load Data Field Length to Aux (4 bytes)
     aux *= 256; //shift whole byte left
     aux+= &buffer[i+4];
+    fprintf(stderr, "aux = %0x\n",aux);
   }
+  
   
   if(buflen == aux + 12){
     return 1;
