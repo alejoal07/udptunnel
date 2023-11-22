@@ -516,13 +516,13 @@ static int udp_to_tcp(struct relay *relay)
     
     for (int i = 0; i < deviceCount; i++){
       if(nameMap[i].id == imei){
-        wirMessage.bufferScanIndex = i;
-        nameMap[bufferScanIndex].port = ntohs(remote_udpaddr.sin_port);
+        wirMessage.idMapIndex = i;
+        nameMap[wirMessage.idMapIndex].port = ntohs(remote_udpaddr.sin_port);
         break;
       }
     }
-    fprintf(stderr, "Device registration imei: %lu\n",nameMap[wirMessage.bufferScanIndex].id);
-    fprintf(stderr, "Asigned port: %d\n",nameMap[wirMessage.bufferScanIndex].port);
+    fprintf(stderr, "Device registration imei: %lu\n",nameMap[wirMessage.idMapIndex].id);
+    fprintf(stderr, "Asigned port: %d\n",nameMap[wirMessage.idMapIndex].port);
   } // End Of Imei Registration to Server 
 
   p.length = htons(buflen);
