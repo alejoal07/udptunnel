@@ -496,20 +496,21 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Received %d byte UDP packet from %s/%hu\n", buflen,
             inet_ntoa(remote_udpaddr.sin_addr),
             ntohs(remote_udpaddr.sin_port));
+    /* Print the buffer */        
     for(int i = 0; i<buflen ; i++){
       fprintf(stderr, "%02X ",p.buf[i]); 
     }
     fprintf(stderr, "\n");
+    /* End Of Print the buffer */ 
   }
 
   if(buflen== 17 && p.buf[0]== 0x00 && p.buf[1]== 0x0F){ // Imei Registration to Server
     imei = 0;
     for(int i = 2; i<buflen ; i++){
+      imei *= 10;
       imei += (p.buf[i]-0x30);
-      if(i<buflen-1) imei *= 10;
     }
-    fprintf(stderr, "imei: %llu",imei);
-    fprintf(stderr, "\n");
+    fprintf(stderr, "imei registration: %llu\n",imei);
   } 
 
   p.length = htons(buflen);
