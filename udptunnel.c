@@ -481,7 +481,10 @@ static int udp_to_tcp(struct relay *relay)
   int buflen;
   struct sockaddr_in remote_udpaddr;
   int addrlen = sizeof(remote_udpaddr);
+  /////////////////////////////
   uint64_t imei; 
+  struct atrack_wir_message wirMessage = {};
+  /////////////////////////////
 
   if ((buflen = recvfrom(relay->udp_recv_sock, p.buf, UDPBUFFERSIZE, 0,
                          (struct sockaddr *) &remote_udpaddr,
@@ -510,13 +513,17 @@ static int udp_to_tcp(struct relay *relay)
       imei *= 10;
       imei += (p.buf[i]-0x30);
     }
-    fprintf(stderr, "Device registration imei: %lu\n",imei);
-    for (int i = 0; i < deviceCount; i++)
-    {
-      /* code */
-    }
     
-  } 
+    for (int i = 0; i < deviceCount; i++){
+      if(nameMap[i].id == imei){
+        wirMessage.bufferScanIndex = i;
+        nameMap[bufferScanIndex].port = ntohs(remote_udpaddr.sin_port);
+        break;
+      }
+    }
+    fprintf(stderr, "Device registration imei: %lu\n",nameMap[bufferScanIndex].id);
+    fprintf(stderr, "Asigned port: %d\n",nameMap[bufferScanIndex].port);
+  } // End Of Imei Registration to Server 
 
   p.length = htons(buflen);
   if (send(relay->tcp_sock, (void *) &p, buflen+sizeof(p.length), 0) < 0) {
