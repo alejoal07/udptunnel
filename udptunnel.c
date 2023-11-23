@@ -542,15 +542,22 @@ static int udp_to_tcp(struct relay *relay)
     
     fprintf(stderr, "Codec8 Message\n");
     wirCount = 0;
-    wirMessage.idMapIndex = 0xFFFF;
-    for(int i=0;i<deviceCount;i++){
+    wirMessage.idMapIndex = deviceCount;
+    for(int i=0;i<wirMessage.idMapIndex;i++){
       if(nameMap[i].port==ntohs(remote_udpaddr.sin_port)){ // if port is previously registered, load the map index
         wirMessage.idMapIndex = i;
       }
     }
-    if(wirMessage.idMapIndex != 0xFFFF){ // if id was found, start parsing
+    if(wirMessage.idMapIndex != deviceCount){ // if id was found, start parsing
       wirMessage.id = nameMap[wirMessage.idMapIndex].id; 
       fprintf(stderr, "Message from imei: %lu\n",wirMessage.id);
+      revmemcpy(&wirMessage.gpsDateTime,&buffer[10],sizeof(wirMessage.gpsDateTime)); // Load Timestamp
+			epch=wirMessage.gpsDateTime/1000;
+			ptm = gmtime(&epch);
+      fprintf(stderr, "DateTime: %02d%02d%02d%02d%02d%02d \n",ptm->tm_mday,ptm->tm_mon + 1,ptm->tm_year-100,ptm->tm_hour,ptm->tm_min,ptm->tm_sec);
+
+    } else{ // Message sender not prevouosly registered
+      fprintf(stderr, "Unregistered Sender");
     } 
 
   } // End of Codec8 Message parser

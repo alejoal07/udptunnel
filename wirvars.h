@@ -9,7 +9,7 @@ struct atrack_wir_message {
 	int bufferScanIndex;
 	uint64_t id;
 	uint16_t idMapIndex;
-	uint32_t gpsDateTime;
+	uint64_t gpsDateTime;
 	int32_t longitude;
 	int32_t latitude;
 	uint16_t heading;
