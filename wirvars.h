@@ -1,5 +1,6 @@
 /////////////////////////////////////////////////////////////////////////// Custom Code
 int isCodec8(int ,unsigned char*);
+void revmemcpy (void*, const void*, size_t);
 
 
 struct atrack_wir_message {
@@ -90,5 +91,32 @@ const struct eventIdToName eventMap[eventCount] = {
 	{110, "Aceleración bruzca"}, // "Aceleración bruzca"
 	{111, "Curva Bruzca"}, // "Curva Bruzca"
 };
+
+void revmemcpy (void *dest, const void *src, size_t len)
+{
+  char *d = dest + len - 1;
+  const char *s = src;
+  while (len--)
+    *d-- = *s++;
+  //return
+}
+
+int isCodec8(int buflen,unsigned char* buffer){
+  uint32_t aux = 0;
+
+  if (buffer[0] || buffer[1] || buffer[2] || buffer[3]) // check preamble
+    return 0; 
+
+  for (int i = 0; i < 4; i++){ // Load Codec8 "Data Field Length" value to Aux (4 bytes)
+    aux *= 256; // shift one byte left
+    aux += buffer[i + 4];
+  }
+
+  // Check for correct "Data Field Length", "Codec ID", and matching "Number of Data 1 and Number of Data 2 Values"
+  if ((buflen == aux + 12) && (buffer[8] == 0x08) && (buffer[9] == buffer[buflen - 5]))
+    return 1;
+
+  return 0;
+}
 
 ///////////////////////////////////////////////////////////////////////////
