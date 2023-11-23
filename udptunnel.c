@@ -481,9 +481,24 @@ static int udp_to_tcp(struct relay *relay)
   int buflen;
   struct sockaddr_in remote_udpaddr;
   int addrlen = sizeof(remote_udpaddr);
-  /////////////////////////////
+
+  //////////// Custom Variables /////////////////
   uint64_t imei; 
   struct atrack_wir_message wirMessage = {};
+  struct tm * ptm;
+	time_t epch;
+	float floatTemp;
+	float floatSpeed =0;
+	float floatHeading =0;
+	float floatLat =0;
+	float floatLon =0;
+	int8_t wirCount=0;
+	int dia;
+	int mes;
+	int anho;
+	int hora;
+	int minutos;
+	int segundos;
   /////////////////////////////
 
   if ((buflen = recvfrom(relay->udp_recv_sock, p.buf, UDPBUFFERSIZE, 0,
@@ -499,7 +514,7 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Received %d byte UDP packet from %s/%hu\n", buflen,
             inet_ntoa(remote_udpaddr.sin_addr),
             ntohs(remote_udpaddr.sin_port));
-    /* Print the buffer */        
+    /* Print the buffer */      
     for(int i = 0; i<buflen ; i++){
       fprintf(stderr, "%02X ",p.buf[i]); 
     }
@@ -523,11 +538,20 @@ static int udp_to_tcp(struct relay *relay)
     }
     fprintf(stderr, "Device registration imei: %lu\n",nameMap[wirMessage.idMapIndex].id);
     fprintf(stderr, "Asigned port: %ld\n",nameMap[wirMessage.idMapIndex].port);
-  } // End Of Imei Registration to Server 
-
-  if(isCodec8(buflen, p.buf)){ // Check if message is codec 8 and then parse
+  } else if(isCodec8(buflen, p.buf)){ // Check if message is codec 8 and then parse
+    
     fprintf(stderr, "Codec8 Message\n");
-  }
+    wirCount = 0;
+    wirMessage.idMapIndex = 0xFFFF;
+
+    for(int i=0;i<deviceCount;i++){
+      if(nameMap[i].port==ntohs(remote_udpaddr.sin_port)){ // if port is previously registered, Load the map index
+        wirMessage.idMapIndex = i;
+      }
+    }
+    if(wirMessage.idMapIndex != 0xFFFF) fprintf(stderr, "Message from imei: %lu\n",nameMap[wirMessage.idMapIndex].id);
+
+  } // End of Codec8 Message parser
 
   p.length = htons(buflen);
   if (send(relay->tcp_sock, (void *) &p, buflen+sizeof(p.length), 0) < 0) {
@@ -537,6 +561,7 @@ static int udp_to_tcp(struct relay *relay)
 
   return 0;
 } /* udp_to_tcp */
+
 
 int isCodec8(int buflen,unsigned char* buffer){
   uint32_t aux = 0;
