@@ -543,13 +543,15 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Codec8 Message\n");
     wirCount = 0;
     wirMessage.idMapIndex = 0xFFFF;
-
     for(int i=0;i<deviceCount;i++){
-      if(nameMap[i].port==ntohs(remote_udpaddr.sin_port)){ // if port is previously registered, Load the map index
+      if(nameMap[i].port==ntohs(remote_udpaddr.sin_port)){ // if port is previously registered, load the map index
         wirMessage.idMapIndex = i;
       }
     }
-    if(wirMessage.idMapIndex != 0xFFFF) fprintf(stderr, "Message from imei: %lu\n",nameMap[wirMessage.idMapIndex].id);
+    if(wirMessage.idMapIndex != 0xFFFF){ // if id was found, start parsing
+      wirMessage.id = nameMap[wirMessage.idMapIndex].id; 
+      fprintf(stderr, "Message from imei: %lu\n",wirMessage.id);
+    } 
 
   } // End of Codec8 Message parser
 
