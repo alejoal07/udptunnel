@@ -558,10 +558,10 @@ static int udp_to_tcp(struct relay *relay)
       fprintf(stderr, "DateTime: %02d/%02d/%02d %02d:%02d:%02d \n",ptm->tm_mday,ptm->tm_mon + 1,ptm->tm_year-100,ptm->tm_hour,ptm->tm_min,ptm->tm_sec);
       revmemcpy(&wirMessage.latitude,&p.buf[23],sizeof(wirMessage.latitude)); // Load Latitude
 			floatLat=wirMessage.latitude;
-			floatLat/=1000000;
+			floatLat/=10000000;
 			revmemcpy(&wirMessage.longitude,&p.buf[19],sizeof(wirMessage.longitude)); // Load Longitude
 			floatLon=wirMessage.longitude;
-      floatLon/=1000000;
+      floatLon/=10000000;
       fprintf(stderr, "Latitude: %+09.5f Longitude:%+010.5f \n",floatLat,floatLon);
 
     } else{ // Message sender not prevouosly registered
