@@ -512,7 +512,7 @@ static int udp_to_tcp(struct relay *relay)
   }
 
   if (debug > 1) {
-    fprintf(stderr, "Received %d byte UDP packet from %s/%hu\n", buflen,
+    fprintf(stderr, "\nReceived %d byte UDP packet from %s/%hu\n", buflen,
             inet_ntoa(remote_udpaddr.sin_addr),
             ntohs(remote_udpaddr.sin_port));
     /* Print the buffer */      
@@ -541,7 +541,7 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Asigned port: %ld\n",nameMap[wirMessage.idMapIndex].port);
   } else if(isCodec8(buflen, p.buf)){ // Check if message is codec 8 and then parse
     
-    fprintf(stderr, "\nCodec8 Message\n");
+    fprintf(stderr, "Codec8 Message\n");
     wirCount = 0;
     wirMessage.idMapIndex = deviceCount;
     for(int i=0;i<wirMessage.idMapIndex;i++){
