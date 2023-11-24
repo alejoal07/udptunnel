@@ -549,29 +549,27 @@ static int udp_to_tcp(struct relay *relay)
         wirMessage.idMapIndex = i;
       }
     }
-    if(wirMessage.idMapIndex != deviceCount){ // if id was found, start parsing
+    if(wirMessage.idMapIndex != deviceCount){ // was ID Found?
       wirMessage.id = nameMap[wirMessage.idMapIndex].id; 
       fprintf(stderr, "Message from imei: %lu\n",wirMessage.id);
-      revmemcpy(&wirMessage.gpsDateTime,&p.buf[10],sizeof(wirMessage.gpsDateTime)); // Load Timestamp
-			epch=wirMessage.gpsDateTime/1000;
-			ptm = gmtime(&epch);
-      fprintf(stderr, "DateTime: %02d/%02d/%02d %02d:%02d:%02d \n",ptm->tm_mday,ptm->tm_mon + 1,ptm->tm_year-100,ptm->tm_hour,ptm->tm_min,ptm->tm_sec);
-      revmemcpy(&wirMessage.latitude,&p.buf[23],sizeof(wirMessage.latitude)); // Load Latitude
-			floatLat=wirMessage.latitude;
-			floatLat/=10000000;
-			revmemcpy(&wirMessage.longitude,&p.buf[19],sizeof(wirMessage.longitude)); // Load Longitude
-			floatLon=wirMessage.longitude;
-      floatLon/=10000000;
-      fprintf(stderr, "Latitude: %+09.5f Longitude:%+010.5f \n",floatLat,floatLon);
-      revmemcpy(&wirMessage.speed,&p.buf[32],sizeof(wirMessage.speed));
-			revmemcpy(&wirMessage.heading,&p.buf[29],sizeof(wirMessage.heading));
-			revmemcpy(&wirMessage.event,&p.buf[34],sizeof(wirMessage.event));
-      fprintf(stderr, " Velocidad: %03d Direccion: %03d Evento: %03d \n",wirMessage.speed,wirMessage.heading,wirMessage.event);
-
-
     } else{ // Message sender not prevouosly registered
       fprintf(stderr, "Unregistered Sender\n");
     } 
+    revmemcpy(&wirMessage.gpsDateTime,&p.buf[10],sizeof(wirMessage.gpsDateTime)); // Load Timestamp
+		epch=wirMessage.gpsDateTime/1000;
+		ptm = gmtime(&epch);
+    fprintf(stderr, "DateTime: %02d/%02d/%02d %02d:%02d:%02d \n",ptm->tm_mday,ptm->tm_mon + 1,ptm->tm_year-100,ptm->tm_hour,ptm->tm_min,ptm->tm_sec);
+    revmemcpy(&wirMessage.latitude,&p.buf[23],sizeof(wirMessage.latitude)); // Load Latitude
+		floatLat=wirMessage.latitude;
+		floatLat/=10000000;
+		revmemcpy(&wirMessage.longitude,&p.buf[19],sizeof(wirMessage.longitude)); // Load Longitude
+		floatLon=wirMessage.longitude;
+    floatLon/=10000000;
+    fprintf(stderr, "Coordinates: %+09.5f,%+010.5f \n",floatLat,floatLon);
+    revmemcpy(&wirMessage.speed,&p.buf[32],sizeof(wirMessage.speed));
+		revmemcpy(&wirMessage.heading,&p.buf[29],sizeof(wirMessage.heading));
+		revmemcpy(&wirMessage.event,&p.buf[34],sizeof(wirMessage.event));
+    fprintf(stderr, " Speed: %03d Heading: %03d Event: %03d \n",wirMessage.speed,wirMessage.heading,wirMessage.event);
 
   } // End of Codec8 Message parser
 
