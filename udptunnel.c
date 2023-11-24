@@ -570,23 +570,36 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Coordinates: %+09.5f,%+010.5f \n",floatLat,floatLon);
     revmemcpy(&wirMessage.speed,&p.buf[32],sizeof(wirMessage.speed)); // Load Speed
 		revmemcpy(&wirMessage.heading,&p.buf[29],sizeof(wirMessage.heading)); // Load Heading
-		revmemcpy(&wirMessage.event,&p.buf[34],sizeof(wirMessage.event)); // Load Event
+		// revmemcpy(&wirMessage.event,&p.buf[34],sizeof(wirMessage.event)); // Load Event
+    wirMessage.event = 2; // temporarily send all events as 2 , event implementation pending
+    wirMessage.odometer = 0; // No odometer implementation
     fprintf(stderr, "Speed: %03d Heading: %03d Event: %03d \n",wirMessage.speed,wirMessage.heading,wirMessage.event);
     
-    wirMessage.temperature1 = 20000;
-    wirMessage.humidity1 = 20000;
+    wirMessage.temperature1 = -9900;
+    wirMessage.humidity1 = 3000;
     scanPointer=36; // set scan pointer to "N1 Of One Byte IO"
     scanPointer += 1+(p.buf[scanPointer]*2); // offset all 1 byte IO Values, pointer now points to  "N2 Of two Byte IO"
     twoByteIOCount = p.buf[scanPointer]; // How many two byte IO's were sent
     scanPointer++; // Point to first two byte IO ID
     for(uint8_t i = 0; i<twoByteIOCount; i++){ // Scan for Hum and Temp Values
-      if(p.buf[scanPointer] == 25)revmemcpy(&wirMessage.temperature1,&p.buf[scanPointer+1],sizeof(wirMessage.temperature1));
-      else if(p.buf[scanPointer] == 86)revmemcpy(&wirMessage.humidity1,&p.buf[scanPointer+1],sizeof(wirMessage.humidity1));
+      if(p.buf[scanPointer] == 25)revmemcpy(&wirMessage.temperature1,&p.buf[scanPointer+1],sizeof(wirMessage.temperature1)); // Load Temp Value
+      else if(p.buf[scanPointer] == 86)revmemcpy(&wirMessage.humidity1,&p.buf[scanPointer+1],sizeof(wirMessage.humidity1)); // Load Hum Value
       scanPointer += 3; // Read Next Value
     }
-    floatTemp=wirMessage.temperature1;
-    floatTemp/=100;
+    if(wirMessage.humidity1 == 3000){ // If not found or sensor disconnected
+      wirMessage.temperature1 = -9900;  
+    }
+    floatTemp=wirMessage.temperature1; // Load to a float
+    floatTemp/=100; // set decimal point where it's supposed to be
     fprintf(stderr, "Temperature: %+.0f \n",floatTemp);
+    
+    if (wirMessage.idMapIndex != deviceCount){ // if device has previously registered
+      wirCount = sprintf(wirMessage.message, "%s,%02d%02d%02d%02d%02d%02d,%+09.5f,%+010.5f,%03d,%03d,%03d,%d,%+.0f|", nameMap[wirMessage.idMapIndex].name,
+                         ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year - 100, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, floatLat, floatLon, wirMessage.speed, wirMessage.heading,
+                         wirMessage.event, wirMessage.odometer, floatTemp);
+      wirMessage.message[wirCount] = 0;                  
+      fprintf(stderr, "%s\n",wirMessage.message);
+    }
 
   } // End of Codec8 Message parser
 
