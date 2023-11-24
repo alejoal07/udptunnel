@@ -541,7 +541,7 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Asigned port: %ld\n",nameMap[wirMessage.idMapIndex].port);
   } else if(isCodec8(buflen, p.buf)){ // Check if message is codec 8 and then parse
     
-    fprintf(stderr, "Codec8 Message\n");
+    fprintf(stderr, "\nCodec8 Message\n");
     wirCount = 0;
     wirMessage.idMapIndex = deviceCount;
     for(int i=0;i<wirMessage.idMapIndex;i++){
@@ -566,10 +566,10 @@ static int udp_to_tcp(struct relay *relay)
 		floatLon=wirMessage.longitude;
     floatLon/=10000000;
     fprintf(stderr, "Coordinates: %+09.5f,%+010.5f \n",floatLat,floatLon);
-    revmemcpy(&wirMessage.speed,&p.buf[32],sizeof(wirMessage.speed));
-		revmemcpy(&wirMessage.heading,&p.buf[29],sizeof(wirMessage.heading));
-		revmemcpy(&wirMessage.event,&p.buf[34],sizeof(wirMessage.event));
-    fprintf(stderr, " Speed: %03d Heading: %03d Event: %03d \n",wirMessage.speed,wirMessage.heading,wirMessage.event);
+    revmemcpy(&wirMessage.speed,&p.buf[32],sizeof(wirMessage.speed)); // Load Speed
+		revmemcpy(&wirMessage.heading,&p.buf[29],sizeof(wirMessage.heading)); // Load Heading
+		revmemcpy(&wirMessage.event,&p.buf[34],sizeof(wirMessage.event)); // Load Event
+    fprintf(stderr, "Speed: %03d Heading: %03d Event: %03d \n",wirMessage.speed,wirMessage.heading,wirMessage.event);
 
   } // End of Codec8 Message parser
 
