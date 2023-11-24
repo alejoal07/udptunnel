@@ -23,7 +23,7 @@ struct atrack_wir_message {
 struct mapIdToName {
     uint64_t id;
     uint64_t port;
-    char* name;
+    unsigned char* name;
 };
 
 #define deviceCount 40
