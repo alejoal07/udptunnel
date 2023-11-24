@@ -587,11 +587,17 @@ static int udp_to_tcp(struct relay *relay)
     fprintf(stderr, "Temperature: %+.0f \n",floatTemp);
     
     if (wirMessage.idMapIndex != deviceCount){ // if device has previously registered
-      sendPacket.length = sprintf(sendPacket.buf, "%s,%02d%02d%02d%02d%02d%02d,%+09.5f,%+010.5f,%03d,%03d,%03d,%d,%+.0f|", nameMap[wirMessage.idMapIndex].name,
+      wirCount = sprintf(sendPacket.buf, "%s,%02d%02d%02d%02d%02d%02d,%+09.5f,%+010.5f,%03d,%03d,%03d,%d,%+.0f|", nameMap[wirMessage.idMapIndex].name,
                          ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year - 100, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, floatLat, floatLon, wirMessage.speed, wirMessage.heading,
                          wirMessage.event, wirMessage.odometer, floatTemp);
-      sendPacket.buf[sendPacket.length] = 0;                  
+      sendPacket.buf[wirCount] = 0;                  
       fprintf(stderr, "%s\n",sendPacket.buf);
+      sendPacket.length = htons(wirCount);
+      if (send(relay->tcp_sock, (void *) &sendPacket, wirCount+sizeof(sendPacket.length), 0) < 0) {
+        perror("udp_to_tcp: send");
+        return 1;
+      }
+
       /*wirCount = sprintf(wirMessage.message, "%s,%02d%02d%02d%02d%02d%02d,%+09.5f,%+010.5f,%03d,%03d,%03d,%d,%+.0f|", nameMap[wirMessage.idMapIndex].name,
                          ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year - 100, ptm->tm_hour, ptm->tm_min, ptm->tm_sec, floatLat, floatLon, wirMessage.speed, wirMessage.heading,
                          wirMessage.event, wirMessage.odometer, floatTemp);
@@ -601,11 +607,12 @@ static int udp_to_tcp(struct relay *relay)
 
   } // End of Codec8 Message parser
 
+/* Original Send
   p.length = htons(buflen);
   if (send(relay->tcp_sock, (void *) &p, buflen+sizeof(p.length), 0) < 0) {
     perror("udp_to_tcp: send");
     return 1;
-  }
+  }*/
 
   return 0;
 } /* udp_to_tcp */
