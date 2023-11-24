@@ -555,10 +555,10 @@ static int udp_to_tcp(struct relay *relay)
       revmemcpy(&wirMessage.gpsDateTime,&p.buf[10],sizeof(wirMessage.gpsDateTime)); // Load Timestamp
 			epch=wirMessage.gpsDateTime/1000;
 			ptm = gmtime(&epch);
-      fprintf(stderr, "DateTime: %02d%02d%02d%02d%02d%02d \n",ptm->tm_mday,ptm->tm_mon + 1,ptm->tm_year-100,ptm->tm_hour,ptm->tm_min,ptm->tm_sec);
+      fprintf(stderr, "DateTime: %02d/%02d/%02d %02d:%02d:%02d \n",ptm->tm_mday,ptm->tm_mon + 1,ptm->tm_year-100,ptm->tm_hour,ptm->tm_min,ptm->tm_sec);
 
     } else{ // Message sender not prevouosly registered
-      fprintf(stderr, "Unregistered Sender");
+      fprintf(stderr, "Unregistered Sender\n");
     } 
 
   } // End of Codec8 Message parser
