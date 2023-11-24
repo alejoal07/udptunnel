@@ -593,7 +593,7 @@ static int udp_to_tcp(struct relay *relay)
       sendPacket.buf[wirCount] = 0;                  
       fprintf(stderr, "%s\n",sendPacket.buf);
       sendPacket.length = htons(wirCount);
-      if (send(relay->tcp_sock, (void *) &sendPacket, wirCount+sizeof(sendPacket.length), 0) < 0) {
+      if (send(relay->tcp_sock, (void *) &sendPacket.buf, wirCount, 0) < 0) {
         perror("udp_to_tcp: send");
         return 1;
       }
