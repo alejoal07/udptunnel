@@ -578,7 +578,7 @@ static int udp_to_tcp(struct relay *relay)
     scanPointer=36; // set scan pointer to "N1 Of One Byte IO"
     scanPointer += 1+(p.buf[scanPointer]*2); // offset all 1 byte IO Values, pointer now points to  "N2 Of two Byte IO"
     twoByteIOCount = p.buf[scanPointer]; // How many two byte IO's were sent
-    scanPointer++ // Point to first two byte IO ID
+    scanPointer++; // Point to first two byte IO ID
     for(uint8_t i = 0; i<twoByteIOCount; i++){ // Scan for Hum and Temp Values
       if(p.buf[scanPointer] == 25)revmemcpy(&wirMessage.temperature1,&p.buf[scanPointer+1],sizeof(wirMessage.temperature1));
       else if(p.buf[scanPointer] == 86)revmemcpy(&wirMessage.humidity1,&p.buf[scanPointer+1],sizeof(wirMessage.humidity1));
