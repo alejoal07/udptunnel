@@ -6,7 +6,6 @@ void revmemcpy (void*, const void*, size_t);
 struct atrack_wir_message {
 	char message[200];
 	char asciiAux[20];
-	char gpsQuality;
 	int bufferScanIndex;
 	uint64_t id;
 	uint16_t idMapIndex;
@@ -18,8 +17,7 @@ struct atrack_wir_message {
 	uint8_t event;
 	uint32_t odometer;
 	int16_t temperature1;
-	int16_t temperature2;
-	int16_t temperature3;
+	uint16_t humidity1;
 };
 
 struct mapIdToName {
@@ -113,7 +111,7 @@ int isCodec8(int buflen,unsigned char* buffer){
   }
 
   // Check for correct "Data Field Length", "Codec ID", and matching "Number of Data 1 and Number of Data 2 Values"
-  if ((buflen == aux + 12) && (buffer[8] == 0x08) && (buffer[9] == buffer[buflen - 5]))
+  if ((buflen == aux + 12) && (buffer[8] == 0x08) && (buffer[9] == buffer[buflen - 5]) && (buffer[9]>=1))
     return 1;
 
   return 0;

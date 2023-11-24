@@ -500,6 +500,8 @@ static int udp_to_tcp(struct relay *relay)
 	int hora;
 	int minutos;
 	int segundos;
+  uint16_t scanPointer;
+  uint8_t twoByteIOCount;
   /////////////////////////////
 
   if ((buflen = recvfrom(relay->udp_recv_sock, p.buf, UDPBUFFERSIZE, 0,
@@ -570,6 +572,21 @@ static int udp_to_tcp(struct relay *relay)
 		revmemcpy(&wirMessage.heading,&p.buf[29],sizeof(wirMessage.heading)); // Load Heading
 		revmemcpy(&wirMessage.event,&p.buf[34],sizeof(wirMessage.event)); // Load Event
     fprintf(stderr, "Speed: %03d Heading: %03d Event: %03d \n",wirMessage.speed,wirMessage.heading,wirMessage.event);
+    
+    wirMessage.temperature1 = 20000;
+    wirMessage.humidity1 = 20000;
+    scanPointer=36; // set scan pointer to "N1 Of One Byte IO"
+    scanpointer += 1+(p.buf[scanPointer]*2) // offset all 1 byte IO Values, pointer now points to  "N2 Of two Byte IO"
+    twoByteIOCount = p.buf[scanPointer]; // How many two byte IO's were sent
+    scanPointer++ // Point to first two byte IO ID
+    for(uint8_t i = 0; i<twoByteIOCount; i++){ // Scan for Hum and Temp Values
+      if(p.buf[scanPointer] == 25)revmemcpy(&wirMessage.temperature1,&p.buf[scanPointer+1],sizeof(wirMessage.temperature1));
+      else if(p.buf[scanPointer] == 86)revmemcpy(&wirMessage.humidity1,&p.buf[scanPointer+1],sizeof(wirMessage.humidity1));
+      scanPointer += 3; // Read Next Value
+    }
+    floatTemp=wirMessage.temperature1;
+    floatTemp/=100;
+    fprintf(stderr, "Temperature: %+.0f \n",floatTemp);
 
   } // End of Codec8 Message parser
 
