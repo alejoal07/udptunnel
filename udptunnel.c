@@ -563,9 +563,9 @@ static int udp_to_tcp(struct relay *relay)
 			floatLon=wirMessage.longitude;
       floatLon/=10000000;
       fprintf(stderr, "Latitude: %+09.5f Longitude:%+010.5f \n",floatLat,floatLon);
-      revmemcpy(&wirMessage.speed,&buffer[32],sizeof(wirMessage.speed));
-			revmemcpy(&wirMessage.heading,&buffer[29],sizeof(wirMessage.heading));
-			revmemcpy(&wirMessage.event,&buffer[34],sizeof(wirMessage.event));
+      revmemcpy(&wirMessage.speed,&p.buf[32],sizeof(wirMessage.speed));
+			revmemcpy(&wirMessage.heading,&p.buf[29],sizeof(wirMessage.heading));
+			revmemcpy(&wirMessage.event,&p.buf[34],sizeof(wirMessage.event));
       fprintf(stderr, " Velocidad: %03d Direccion: %03d Evento: %03d \n",wirMessage.speed,wirMessage.heading,wirMessage.event);
 
 
