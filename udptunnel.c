@@ -470,7 +470,7 @@ static void setup_tcp_client(struct relay *relay)
                      ntohs(relay->tcpaddr.sin_port));
 } /* connect_tcp */
 
-/***************************** Telt - Wir Custom Code ******************************************/
+/***************************** Telt - Wir Custom Code  v1.0 ******************************************/
 
 /* udp_to_tcp()
  * A packet has arrived on the UDP port of the relay.  Forward it to the TCP
